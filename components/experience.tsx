@@ -44,11 +44,16 @@ export default function Experience() {
                 fontSize: "1.5rem",
               }}
             >
-              <h3 className="font-semibold capitalize">{item.title}</h3>
-              <p className="font-normal !mt-0">{item.location}</p>
-              <p className="!mt-1 !font-normal text-gray-700 dark:text-white/75">
-                {item.description}
-              </p>
+             <div className="mb-4">
+  <h3 className="text-lg font-semibold capitalize text-gray-900 dark:text-gray-100">{item.title}</h3>
+  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+    {item.company} - <small className="text-gray-500">{item.location}</small>
+  </p>
+  <p className="mt-2 text-base font-normal text-gray-800 dark:text-gray-200">
+    {item.description}
+  </p>
+</div>
+
             </VerticalTimelineElement>
           </React.Fragment>
         ))}
