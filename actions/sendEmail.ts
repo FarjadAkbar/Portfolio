@@ -1,11 +1,26 @@
 "use server";
 
-import React from "react";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { validateString, getErrorMessage } from "@/lib/utils";
-import ContactFormEmail from "@/email/contact-form-email";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Set up the Nodemailer transporter with Gmail's SMTP
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,  // Your Gmail address
+    pass: process.env.GMAIL_PASS,  // Your Gmail App Password
+  },
+});
+
+// Simple HTML template for email content
+const generateEmailHtml = (message: string, senderEmail: string) => `
+  <div>
+    <h2>Message from Contact Form</h2>
+    <p><strong>Sender Email:</strong> ${senderEmail}</p>
+    <p><strong>Message:</strong></p>
+    <p>${message}</p>
+  </div>
+`;
 
 export const sendEmail = async (formData: FormData) => {
   const senderEmail = formData.get("senderEmail");
@@ -23,25 +38,27 @@ export const sendEmail = async (formData: FormData) => {
     };
   }
 
-  let data;
+  // Generate HTML for the email body
+  const emailHtml = generateEmailHtml(message, senderEmail);
+
   try {
-    data = await resend.emails.send({
-      from: "Contact Form <farjadakabr4@gmail.com>",
-      to: "farjadakabr4@gmail.com",
+    const mailOptions = {
+      from: `"Contact Form" <${process.env.GMAIL_USER}>`, // Sender address
+      to: process.env.GMAIL_USER, // Recipient address
       subject: "Message from contact form",
-      reply_to: senderEmail,
-      react: React.createElement(ContactFormEmail, {
-        message: message,
-        senderEmail: senderEmail,
-      }),
-    });
+      replyTo: senderEmail, // Reply to the sender's email
+      html: emailHtml, // HTML email content
+    };
+
+    // Send email
+    const info = await transporter.sendMail(mailOptions);
+
+    return {
+      data: info,
+    };
   } catch (error: unknown) {
     return {
       error: getErrorMessage(error),
     };
   }
-
-  return {
-    data,
-  };
 };
