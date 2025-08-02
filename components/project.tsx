@@ -4,14 +4,21 @@ import { useRef } from "react";
 import { projectsData } from "@/lib/data";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { BsGithub } from "react-icons/bs";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import Link from "next/link";
 
 type ProjectProps = (typeof projectsData)[number];
 
 export default function Project({
   title,
   description,
-  tags,
-  imageUrl,
+  image,
+  features,
+  technologies,
+  github,
+  demo,
+  highlight
 }: ProjectProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -28,44 +35,66 @@ export default function Project({
         scale: scaleProgess,
         opacity: opacityProgess,
       }}
-      className="group mb-3 sm:mb-8 last:mb-0"
+      className={`overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg ${highlight ? "ring-2 ring-gray-900 dark:ring-white ring-opacity-20" : ""}`}
     >
-      <section className="bg-gray-100 max-w-[42rem] border border-black/5 rounded-lg overflow-hidden sm:pr-8 relative sm:h-[20rem] hover:bg-gray-200 transition sm:group-even:pl-8 dark:text-white dark:bg-white/10 dark:hover:bg-white/20">
-        <div className="pt-4 pb-7 px-5 sm:pl-10 sm:pr-2 sm:pt-10 sm:max-w-[50%] flex flex-col h-full sm:group-even:ml-[18rem]">
-          <h3 className="text-2xl font-semibold">{title}</h3>
-          <p className="mt-2 leading-relaxed text-gray-700 dark:text-white/70">
-            {description}
-          </p>
-          <ul className="flex flex-wrap mt-4 gap-2 sm:mt-auto">
-            {tags.map((tag, index) => (
-              <li
-                className="bg-black/[0.7] px-3 py-1 text-[0.7rem] uppercase tracking-wider text-white rounded-full dark:text-white/70"
-                key={index}
-              >
-                {tag}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <Image
-          src={imageUrl}
-          alt="Project I worked on"
-          quality={95}
-          className="absolute hidden sm:block top-8 -right-40 w-[28.25rem] rounded-t-lg shadow-2xl
-        transition 
-        group-hover:scale-[1.04]
-        group-hover:-translate-x-3
-        group-hover:translate-y-3
-        group-hover:-rotate-2
-
-        group-even:group-hover:translate-x-3
-        group-even:group-hover:translate-y-3
-        group-even:group-hover:rotate-2
-
-        group-even:right-[initial] group-even:-left-40"
-        />
-      </section>
+      <div className="grid md:grid-cols-2 gap-0 max-w-[65rem]">
+                <div className="relative h-64 md:h-auto">
+                  <Image src={image || "/placeholder.svg"} alt={title} fill className="object-cover" />
+                  {highlight && (
+                    <div className="absolute top-4 left-4">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-900 text-white">
+                        Featured
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-6">
+                  <div className="mb-4">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
+                    <p className="text-base leading-relaxed text-gray-600 dark:text-gray-300">{description}</p>
+                  </div>
+                  <div className="mb-4">
+                    <h4 className="font-semibold mb-2 text-gray-900 dark:text-white">Key Features:</h4>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {features.map((feature, featureIndex) => (
+                        <span
+                          key={featureIndex}
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="mb-6">
+                    <h4 className="font-semibold mb-2 text-gray-900 dark:text-white">Technologies:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {technologies.map((tech, techIndex) => (
+                        <span
+                          key={techIndex}
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  {/* <div className="flex gap-3">
+                    <Link href={github} target="_blank">
+                      <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-900 dark:text-white">
+                        <BsGithub className="w-4 h-4" />
+                        Code
+                      </button>
+                    </Link>
+                    <Link href={demo} target="_blank">
+                      <button className="flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200 text-white rounded-lg transition-colors">
+                        <FaExternalLinkAlt className="w-4 h-4" />
+                        Live Demo
+                      </button>
+                    </Link>
+                  </div> */}
+                </div>
+              </div>
     </motion.div>
   );
 }
